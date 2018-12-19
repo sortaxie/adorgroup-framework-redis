@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -56,7 +58,8 @@ public class RedisCacheConfig  extends CachingConfigurerSupport {
     @Value("${spring.redis.expiration:3600}")
     private long defaultExpiration;
 
-
+    //此注解用于只引用该包,不启用相关redis功能
+    @ConditionalOnProperty(prefix = "framework.redis", value = {"enable"}, havingValue = "true",matchIfMissing = true)
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
         JedisPoolConfig config = new JedisPoolConfig();
@@ -79,7 +82,7 @@ public class RedisCacheConfig  extends CachingConfigurerSupport {
 //        redisHttpSessionConfiguration.setMaxInactiveIntervalInSeconds(2);
 //        return redisHttpSessionConfiguration;
 //    }
-
+    @ConditionalOnProperty(prefix = "framework.redis", value = {"enable"}, havingValue = "true",matchIfMissing = true)
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory redisConnectionFactory = new JedisConnectionFactory(jedisPoolConfig());
@@ -92,7 +95,7 @@ public class RedisCacheConfig  extends CachingConfigurerSupport {
         return redisConnectionFactory;
     }
 
-
+    @ConditionalOnProperty(prefix = "framework.redis", value = {"enable"}, havingValue = "true",matchIfMissing = true)
     @Bean
     public JedisPool redisPoolFactory() {
         logger.info("JedisPool inject success ");
@@ -124,7 +127,7 @@ public class RedisCacheConfig  extends CachingConfigurerSupport {
 //        return template ;
 //    }
 
-
+    @ConditionalOnProperty(prefix = "framework.redis", value = {"enable"}, havingValue = "true",matchIfMissing = true)
     @Bean
     public RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object , Object> template = new RedisTemplate<>();
@@ -142,7 +145,7 @@ public class RedisCacheConfig  extends CachingConfigurerSupport {
     }
 
 
-
+    @ConditionalOnProperty(prefix = "framework.redis", value = {"enable"}, havingValue = "true",matchIfMissing = true)
     @Bean
     public CacheManager cacheManager(RedisTemplate redisTemplate) {
         RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
